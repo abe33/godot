@@ -44,6 +44,12 @@ int Texture2D::get_height() const {
 	return ret;
 }
 
+Point2 Texture2D::get_anchor() const {
+	Point2 ret = Point2(0,0);
+	GDVIRTUAL_REQUIRED_CALL(_get_anchor, ret);
+	return ret;
+}
+
 Size2 Texture2D::get_size() const {
 	return Size2(get_width(), get_height());
 }
@@ -61,10 +67,10 @@ bool Texture2D::has_alpha() const {
 }
 
 void Texture2D::draw(RID p_canvas_item, const Point2 &p_pos, const Color &p_modulate, bool p_transpose) const {
-	if (GDVIRTUAL_CALL(_draw, p_canvas_item, p_pos, p_modulate, p_transpose)) {
+	if (GDVIRTUAL_CALL(_draw, p_canvas_item, p_pos - get_anchor(), p_modulate, p_transpose)) {
 		return;
 	}
-	RenderingServer::get_singleton()->canvas_item_add_texture_rect(p_canvas_item, Rect2(p_pos, get_size()), get_rid(), false, p_modulate, p_transpose);
+	RenderingServer::get_singleton()->canvas_item_add_texture_rect(p_canvas_item, Rect2(p_pos - get_anchor(), get_size()), get_rid(), false, p_modulate, p_transpose);
 }
 
 void Texture2D::draw_rect(RID p_canvas_item, const Rect2 &p_rect, bool p_tile, const Color &p_modulate, bool p_transpose) const {
@@ -97,6 +103,7 @@ Ref<Resource> Texture2D::create_placeholder() const {
 void Texture2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_width"), &Texture2D::get_width);
 	ClassDB::bind_method(D_METHOD("get_height"), &Texture2D::get_height);
+	ClassDB::bind_method(D_METHOD("get_anchor"), &Texture2D::get_anchor);
 	ClassDB::bind_method(D_METHOD("get_size"), &Texture2D::get_size);
 	ClassDB::bind_method(D_METHOD("has_alpha"), &Texture2D::has_alpha);
 	ClassDB::bind_method(D_METHOD("draw", "canvas_item", "position", "modulate", "transpose"), &Texture2D::draw, DEFVAL(Color(1, 1, 1)), DEFVAL(false));

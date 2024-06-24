@@ -96,19 +96,22 @@ void Sprite2D::_get_rects(Rect2 &r_src_rect, Rect2 &r_dst_rect, bool &r_filter_c
 	if (centered) {
 		dest_offset -= frame_size / 2;
 	}
+	Point2 anchor = texture->get_anchor();
 
 	if (get_viewport() && get_viewport()->is_snap_2d_transforms_to_pixel_enabled()) {
 		dest_offset = dest_offset.round();
 	}
-
-	r_dst_rect = Rect2(dest_offset, frame_size);
-
 	if (hflip) {
-		r_dst_rect.size.x = -r_dst_rect.size.x;
+		anchor.x = frame_size.x - anchor.x;
+		frame_size.x = -frame_size.x;
 	}
 	if (vflip) {
-		r_dst_rect.size.y = -r_dst_rect.size.y;
+		anchor.y = frame_size.y - anchor.y;
+		frame_size.y = -frame_size.y;
 	}
+
+	r_dst_rect = Rect2(dest_offset - anchor, frame_size);
+
 }
 
 void Sprite2D::_notification(int p_what) {
@@ -385,11 +388,13 @@ Rect2 Sprite2D::get_rect() const {
 	}
 
 	Size2i s;
+	Point2 a = Point2(0,0);
 
 	if (region_enabled) {
 		s = region_rect.size;
 	} else {
 		s = texture->get_size();
+		a = texture->get_anchor();
 	}
 
 	s = s / Point2(hframes, vframes);
@@ -407,7 +412,14 @@ Rect2 Sprite2D::get_rect() const {
 		s = Size2(1, 1);
 	}
 
-	return Rect2(ofs, s);
+	if (hflip) {
+		a.x = s.width - a.x;
+	}
+	if (vflip) {
+		a.y = s.height - a.y;
+	}
+
+	return Rect2(ofs - a, s);
 }
 
 void Sprite2D::_validate_property(PropertyInfo &p_property) const {

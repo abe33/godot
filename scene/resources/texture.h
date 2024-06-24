@@ -59,6 +59,7 @@ protected:
 
 	GDVIRTUAL0RC(int, _get_width)
 	GDVIRTUAL0RC(int, _get_height)
+	GDVIRTUAL0RC(Point2, _get_anchor)
 	GDVIRTUAL2RC(bool, _is_pixel_opaque, int, int)
 	GDVIRTUAL0RC(bool, _has_alpha)
 
@@ -69,6 +70,7 @@ protected:
 public:
 	virtual int get_width() const;
 	virtual int get_height() const;
+	virtual Point2 get_anchor() const;
 	virtual Size2 get_size() const;
 
 	virtual bool is_pixel_opaque(int p_x, int p_y) const;

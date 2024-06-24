@@ -41,6 +41,7 @@ protected:
 	Ref<Texture2D> atlas;
 	Rect2 region;
 	Rect2 margin;
+	Point2 anchor;
 	bool filter_clip = false;
 
 	static void _bind_methods();
@@ -60,6 +61,9 @@ public:
 
 	void set_margin(const Rect2 &p_margin);
 	Rect2 get_margin() const;
+
+	virtual void set_anchor(const Point2 &p_anchor);
+	virtual Point2 get_anchor() const override;
 
 	void set_filter_clip(const bool p_enable);
 	bool has_filter_clip() const;

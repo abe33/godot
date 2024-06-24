@@ -97,6 +97,7 @@ Rect2 AnimatedSprite2D::_get_rect() const {
 		return Rect2();
 	}
 	Size2 s = t->get_size();
+	Point2 a = t->get_anchor();
 
 	Point2 ofs = offset;
 	if (centered) {
@@ -107,7 +108,14 @@ Rect2 AnimatedSprite2D::_get_rect() const {
 		s = Size2(1, 1);
 	}
 
-	return Rect2(ofs, s);
+	if (hflip) {
+		a.x = s.width - a.x;
+	}
+	if (vflip) {
+		a.y = s.height - a.y;
+	}
+
+	return Rect2(ofs - a, s);
 }
 
 void AnimatedSprite2D::_validate_property(PropertyInfo &p_property) const {
@@ -262,6 +270,8 @@ void AnimatedSprite2D::_notification(int p_what) {
 
 			Size2 s = texture->get_size();
 			Point2 ofs = offset;
+			Point2 a = texture->get_anchor();
+
 			if (centered) {
 				ofs -= s / 2;
 			}
@@ -270,14 +280,16 @@ void AnimatedSprite2D::_notification(int p_what) {
 				ofs = ofs.round();
 			}
 
-			Rect2 dst_rect(ofs, s);
-
 			if (hflip) {
-				dst_rect.size.x = -dst_rect.size.x;
+				a.x = s.x - a.x;
+				s.x = -s.x;
 			}
 			if (vflip) {
-				dst_rect.size.y = -dst_rect.size.y;
+				a.y = s.y - a.y;
+				s.y = -s.y;
 			}
+
+			Rect2 dst_rect(ofs - a, s);
 
 			texture->draw_rect_region(ci, dst_rect, Rect2(Vector2(), texture->get_size()), Color(1, 1, 1), false);
 		} break;
