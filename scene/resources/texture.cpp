@@ -45,7 +45,7 @@ int Texture2D::get_height() const {
 }
 
 Point2 Texture2D::get_anchor() const {
-	Point2 ret = Point2(0,0);
+	Point2 ret;
 	GDVIRTUAL_REQUIRED_CALL(_get_anchor, ret);
 	return ret;
 }

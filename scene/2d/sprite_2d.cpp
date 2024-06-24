@@ -388,7 +388,7 @@ Rect2 Sprite2D::get_rect() const {
 	}
 
 	Size2i s;
-	Point2 a = Point2(0,0);
+	Point2 a;
 
 	if (region_enabled) {
 		s = region_rect.size;
