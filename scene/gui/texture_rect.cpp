@@ -100,7 +100,7 @@ void TextureRect::_notification(int p_what) {
 				offset.height += vflip ? p_atlas->get_margin().get_position().height * scale_size.height * 2 : 0;
 			}
 
-			// offset is increased with scaled anchor to negate 
+			// Offset is increased with scaled anchor to negate
 			// the effect of the anchor while drawing the texture.
 			offset += texture->get_anchor() * scale_size;
 
