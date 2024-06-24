@@ -116,6 +116,7 @@ void Texture2D::_bind_methods() {
 
 	GDVIRTUAL_BIND(_get_width);
 	GDVIRTUAL_BIND(_get_height);
+	GDVIRTUAL_BIND(_get_anchor);
 	GDVIRTUAL_BIND(_is_pixel_opaque, "x", "y");
 	GDVIRTUAL_BIND(_has_alpha);
 
