@@ -145,7 +145,6 @@ void AtlasTexture::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_margin"), &AtlasTexture::get_margin);
 
 	ClassDB::bind_method(D_METHOD("set_anchor", "anchor"), &AtlasTexture::set_anchor);
-	ClassDB::bind_method(D_METHOD("get_anchor"), &AtlasTexture::get_anchor);
 
 	ClassDB::bind_method(D_METHOD("set_filter_clip", "enable"), &AtlasTexture::set_filter_clip);
 	ClassDB::bind_method(D_METHOD("has_filter_clip"), &AtlasTexture::has_filter_clip);
