@@ -93,7 +93,7 @@ void TextureRect::_notification(int p_what) {
 			}
 
 			Ref<AtlasTexture> p_atlas = texture;
-			
+
 			Size2 scale_size(size.width / texture->get_width(), size.height / texture->get_height());
 			if (p_atlas.is_valid() && !region.has_area()) {
 				offset.width += hflip ? p_atlas->get_margin().get_position().width * scale_size.width * 2 : 0;
