@@ -93,13 +93,16 @@ void TextureRect::_notification(int p_what) {
 			}
 
 			Ref<AtlasTexture> p_atlas = texture;
-
+			
+			Size2 scale_size(size.width / texture->get_width(), size.height / texture->get_height());
 			if (p_atlas.is_valid() && !region.has_area()) {
-				Size2 scale_size(size.width / texture->get_width(), size.height / texture->get_height());
-
 				offset.width += hflip ? p_atlas->get_margin().get_position().width * scale_size.width * 2 : 0;
 				offset.height += vflip ? p_atlas->get_margin().get_position().height * scale_size.height * 2 : 0;
 			}
+
+			// offset is increased with scaled anchor to negate 
+			// the effect of the anchor while drawing the texture.
+			offset += texture->get_anchor() * scale_size;
 
 			size.width *= hflip ? -1.0f : 1.0f;
 			size.height *= vflip ? -1.0f : 1.0f;
