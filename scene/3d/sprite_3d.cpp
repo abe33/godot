@@ -1036,7 +1036,18 @@ void AnimatedSprite3D::_draw() {
 		ofs -= tsize / 2;
 	}
 
-	Rect2 dst_rect(ofs, tsize);
+	Point2 anchor = texture->get_anchor();
+	if (is_flipped_h()) {
+		anchor.x = tsize.width - anchor.x;
+	}
+	// Given that the Y axis is inverted in 3D, the anchor's "y" must be inverted
+	// as well, relatively to the texture's height, but only when the sprite
+	// is not flipped vertically.
+	if (!is_flipped_v()) {
+		anchor.y = tsize.height - anchor.y;
+	}
+
+	Rect2 dst_rect(ofs - anchor, tsize);
 
 	draw_texture_rect(texture, dst_rect, src_rect);
 }
