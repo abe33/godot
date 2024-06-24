@@ -111,7 +111,6 @@ void Sprite2D::_get_rects(Rect2 &r_src_rect, Rect2 &r_dst_rect, bool &r_filter_c
 	}
 
 	r_dst_rect = Rect2(dest_offset - anchor, frame_size);
-
 }
 
 void Sprite2D::_notification(int p_what) {
