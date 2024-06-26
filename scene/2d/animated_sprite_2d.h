@@ -54,6 +54,7 @@ class AnimatedSprite2D : public Node2D {
 
 	bool hflip = false;
 	bool vflip = false;
+	bool texture_anchor_ignored = false;
 
 	void _res_changed();
 
@@ -124,6 +125,9 @@ public:
 
 	void set_flip_v(bool p_flip);
 	bool is_flipped_v() const;
+
+	void set_texture_anchor_ignored(bool p_ignore);
+	bool is_texture_anchor_ignored() const;
 
 	PackedStringArray get_configuration_warnings() const override;
 

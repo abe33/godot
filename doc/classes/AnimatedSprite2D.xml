@@ -85,6 +85,7 @@
 		<member name="centered" type="bool" setter="set_centered" getter="is_centered" default="true">
 			If [code]true[/code], texture will be centered.
 			[b]Note:[/b] For games with a pixel art aesthetic, textures may appear deformed when centered. This is caused by their position being between pixels. To prevent this, set this property to [code]false[/code], or consider enabling [member ProjectSettings.rendering/2d/snap/snap_2d_vertices_to_pixel] and [member ProjectSettings.rendering/2d/snap/snap_2d_transforms_to_pixel].
+			[b]Note:[/b] When [code]true[/code] the texture's anchor is ignored.
 		</member>
 		<member name="flip_h" type="bool" setter="set_flip_h" getter="is_flipped_h" default="false">
 			If [code]true[/code], texture is flipped horizontally.
@@ -107,6 +108,9 @@
 		</member>
 		<member name="sprite_frames" type="SpriteFrames" setter="set_sprite_frames" getter="get_sprite_frames">
 			The [SpriteFrames] resource containing the animation(s). Allows you the option to load, edit, clear, make unique and save the states of the [SpriteFrames] resource.
+		</member>
+		<member name="texture_anchor_ignored" type="bool" setter="set_texture_anchor_ignored" getter="is_texture_anchor_ignored" default="false">
+			If [code]true[/code], anchor defined in the [Texture2D] is ignored.
 		</member>
 	</members>
 	<signals>

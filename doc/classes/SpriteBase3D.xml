@@ -62,6 +62,7 @@
 		</member>
 		<member name="centered" type="bool" setter="set_centered" getter="is_centered" default="true">
 			If [code]true[/code], texture will be centered.
+			[b]Note:[/b] When [code]true[/code] the texture's anchor is ignored.
 		</member>
 		<member name="double_sided" type="bool" setter="set_draw_flag" getter="get_draw_flag" default="true">
 			If [code]true[/code], texture can be seen from the back as well, if [code]false[/code], it is invisible when looking at it from behind.
@@ -96,6 +97,9 @@
 		</member>
 		<member name="shaded" type="bool" setter="set_draw_flag" getter="get_draw_flag" default="false">
 			If [code]true[/code], the [Light3D] in the [Environment] has effects on the sprite.
+		</member>
+		<member name="texture_anchor_ignored" type="bool" setter="set_texture_anchor_ignored" getter="is_texture_anchor_ignored" default="false">
+			If [code]true[/code], anchor defined in the [Texture2D] is ignored.
 		</member>
 		<member name="texture_filter" type="int" setter="set_texture_filter" getter="get_texture_filter" enum="BaseMaterial3D.TextureFilter" default="3">
 			Filter flags for the texture. See [enum BaseMaterial3D.TextureFilter] for options.

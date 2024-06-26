@@ -67,6 +67,7 @@ private:
 	List<SpriteBase3D *>::Element *pI = nullptr;
 
 	bool centered = true;
+	bool texture_anchor_ignored = false;
 	Point2 offset;
 
 	bool hflip = false;
@@ -131,6 +132,9 @@ public:
 
 	void set_flip_v(bool p_flip);
 	bool is_flipped_v() const;
+
+	void set_texture_anchor_ignored(bool p_ignore);
+	bool is_texture_anchor_ignored() const;
 
 	void set_render_priority(int p_priority);
 	int get_render_priority() const;

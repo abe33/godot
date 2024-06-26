@@ -49,6 +49,7 @@ class Sprite2D : public Node2D {
 	bool region_enabled = false;
 	Rect2 region_rect;
 	bool region_filter_clip_enabled = false;
+	bool texture_anchor_ignored = false;
 
 	int frame = 0;
 
@@ -105,6 +106,9 @@ public:
 
 	void set_region_rect(const Rect2 &p_region_rect);
 	Rect2 get_region_rect() const;
+
+	void set_texture_anchor_ignored(bool p_ignore);
+	bool is_texture_anchor_ignored() const;
 
 	void set_frame(int p_frame);
 	int get_frame() const;

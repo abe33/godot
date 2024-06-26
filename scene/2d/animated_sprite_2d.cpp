@@ -97,7 +97,6 @@ Rect2 AnimatedSprite2D::_get_rect() const {
 		return Rect2();
 	}
 	Size2 s = t->get_size();
-	Point2 a = t->get_anchor();
 
 	Point2 ofs = offset;
 	if (centered) {
@@ -108,14 +107,20 @@ Rect2 AnimatedSprite2D::_get_rect() const {
 		s = Size2(1, 1);
 	}
 
-	if (hflip) {
-		a.x = s.width - a.x;
-	}
-	if (vflip) {
-		a.y = s.height - a.y;
+	if (!texture_anchor_ignored && !centered) {
+		Point2 a = t->get_anchor();
+
+		if (hflip) {
+			a.x = s.width - a.x;
+		}
+		if (vflip) {
+			a.y = s.height - a.y;
+		}
+
+		ofs -= a;
 	}
 
-	return Rect2(ofs - a, s);
+	return Rect2(ofs, s);
 }
 
 void AnimatedSprite2D::_validate_property(PropertyInfo &p_property) const {
@@ -270,7 +275,6 @@ void AnimatedSprite2D::_notification(int p_what) {
 
 			Size2 s = texture->get_size();
 			Point2 ofs = offset;
-			Point2 a = texture->get_anchor();
 
 			if (centered) {
 				ofs -= s / 2;
@@ -280,16 +284,27 @@ void AnimatedSprite2D::_notification(int p_what) {
 				ofs = ofs.round();
 			}
 
+			if (!texture_anchor_ignored && !centered) {
+				Point2 anchor = texture->get_anchor();
+
+				if (hflip) {
+					anchor.x = s.x - anchor.x;
+				}
+				if (vflip) {
+					anchor.y = s.y - anchor.y;
+				}
+
+				ofs -= anchor;
+			}
+
 			if (hflip) {
-				a.x = s.x - a.x;
 				s.x = -s.x;
 			}
 			if (vflip) {
-				a.y = s.y - a.y;
 				s.y = -s.y;
 			}
 
-			Rect2 dst_rect(ofs - a, s);
+			Rect2 dst_rect(ofs, s);
 
 			texture->draw_rect_region(ci, dst_rect, Rect2(Vector2(), texture->get_size()), Color(1, 1, 1), false);
 		} break;
@@ -444,6 +459,19 @@ void AnimatedSprite2D::set_flip_v(bool p_flip) {
 
 bool AnimatedSprite2D::is_flipped_v() const {
 	return vflip;
+}
+
+void AnimatedSprite2D::set_texture_anchor_ignored(bool p_ignore) {
+	if (texture_anchor_ignored == p_ignore) {
+		return;
+	}
+
+	texture_anchor_ignored = p_ignore;
+	queue_redraw();
+}
+
+bool AnimatedSprite2D::is_texture_anchor_ignored() const {
+	return texture_anchor_ignored;
 }
 
 void AnimatedSprite2D::_res_changed() {
@@ -642,6 +670,9 @@ void AnimatedSprite2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_flip_v", "flip_v"), &AnimatedSprite2D::set_flip_v);
 	ClassDB::bind_method(D_METHOD("is_flipped_v"), &AnimatedSprite2D::is_flipped_v);
 
+	ClassDB::bind_method(D_METHOD("set_texture_anchor_ignored", "ignore"), &AnimatedSprite2D::set_texture_anchor_ignored);
+	ClassDB::bind_method(D_METHOD("is_texture_anchor_ignored"), &AnimatedSprite2D::is_texture_anchor_ignored);
+
 	ClassDB::bind_method(D_METHOD("set_frame", "frame"), &AnimatedSprite2D::set_frame);
 	ClassDB::bind_method(D_METHOD("get_frame"), &AnimatedSprite2D::get_frame);
 
@@ -669,6 +700,7 @@ void AnimatedSprite2D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "speed_scale"), "set_speed_scale", "get_speed_scale");
 	ADD_GROUP("Offset", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "centered"), "set_centered", "is_centered");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "texture_anchor_ignored"), "set_texture_anchor_ignored", "is_texture_anchor_ignored");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "offset", PROPERTY_HINT_NONE, "suffix:px"), "set_offset", "get_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_h"), "set_flip_h", "is_flipped_h");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_v"), "set_flip_v", "is_flipped_v");

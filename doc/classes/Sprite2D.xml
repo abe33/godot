@@ -53,6 +53,7 @@
 		<member name="centered" type="bool" setter="set_centered" getter="is_centered" default="true">
 			If [code]true[/code], texture is centered.
 			[b]Note:[/b] For games with a pixel art aesthetic, textures may appear deformed when centered. This is caused by their position being between pixels. To prevent this, set this property to [code]false[/code], or consider enabling [member ProjectSettings.rendering/2d/snap/snap_2d_vertices_to_pixel] and [member ProjectSettings.rendering/2d/snap/snap_2d_transforms_to_pixel].
+			[b]Note:[/b] When [code]true[/code] the texture's anchor is ignored.
 		</member>
 		<member name="flip_h" type="bool" setter="set_flip_h" getter="is_flipped_h" default="false">
 			If [code]true[/code], texture is flipped horizontally.
@@ -74,6 +75,7 @@
 		</member>
 		<member name="region_enabled" type="bool" setter="set_region_enabled" getter="is_region_enabled" default="false">
 			If [code]true[/code], texture is cut from a larger atlas texture. See [member region_rect].
+			[b]Note:[/b] When [code]true[/code] the texture's anchor is ignored.
 		</member>
 		<member name="region_filter_clip_enabled" type="bool" setter="set_region_filter_clip_enabled" getter="is_region_filter_clip_enabled" default="false">
 			If [code]true[/code], the outermost pixels get blurred out. [member region_enabled] must be [code]true[/code].
@@ -83,6 +85,9 @@
 		</member>
 		<member name="texture" type="Texture2D" setter="set_texture" getter="get_texture">
 			[Texture2D] object to draw.
+		</member>
+		<member name="texture_anchor_ignored" type="bool" setter="set_texture_anchor_ignored" getter="is_texture_anchor_ignored" default="false">
+			If [code]true[/code], anchor defined in the [Texture2D] is ignored.
 		</member>
 		<member name="vframes" type="int" setter="set_vframes" getter="get_vframes" default="1">
 			The number of rows in the sprite sheet. When this property is changed, [member frame] is adjusted so that the same visual frame is maintained (same row and column). If that's impossible, [member frame] is reset to [code]0[/code].

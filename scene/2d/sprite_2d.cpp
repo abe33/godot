@@ -96,21 +96,32 @@ void Sprite2D::_get_rects(Rect2 &r_src_rect, Rect2 &r_dst_rect, bool &r_filter_c
 	if (centered) {
 		dest_offset -= frame_size / 2;
 	}
-	Point2 anchor = texture->get_anchor();
 
 	if (get_viewport() && get_viewport()->is_snap_2d_transforms_to_pixel_enabled()) {
 		dest_offset = dest_offset.round();
 	}
+
+	if (!texture_anchor_ignored && !centered && !region_enabled) {
+		Point2 anchor = texture->get_anchor();
+
+		if (hflip) {
+			anchor.x = frame_size.x - anchor.x;
+		}
+		if (vflip) {
+			anchor.y = frame_size.y - anchor.y;
+		}
+
+		dest_offset -= anchor;
+	}
+
 	if (hflip) {
-		anchor.x = frame_size.x - anchor.x;
 		frame_size.x = -frame_size.x;
 	}
 	if (vflip) {
-		anchor.y = frame_size.y - anchor.y;
 		frame_size.y = -frame_size.y;
 	}
 
-	r_dst_rect = Rect2(dest_offset - anchor, frame_size);
+	r_dst_rect = Rect2(dest_offset, frame_size);
 }
 
 void Sprite2D::_notification(int p_what) {
@@ -252,6 +263,19 @@ bool Sprite2D::is_region_filter_clip_enabled() const {
 	return region_filter_clip_enabled;
 }
 
+void Sprite2D::set_texture_anchor_ignored(bool p_ignore) {
+	if (texture_anchor_ignored == p_ignore) {
+		return;
+	}
+
+	texture_anchor_ignored = p_ignore;
+	queue_redraw();
+}
+
+bool Sprite2D::is_texture_anchor_ignored() const {
+	return texture_anchor_ignored;
+}
+
 void Sprite2D::set_frame(int p_frame) {
 	ERR_FAIL_INDEX(p_frame, vframes * hframes);
 
@@ -387,13 +411,11 @@ Rect2 Sprite2D::get_rect() const {
 	}
 
 	Size2i s;
-	Point2 a;
 
 	if (region_enabled) {
 		s = region_rect.size;
 	} else {
 		s = texture->get_size();
-		a = texture->get_anchor();
 	}
 
 	s = s / Point2(hframes, vframes);
@@ -411,14 +433,20 @@ Rect2 Sprite2D::get_rect() const {
 		s = Size2(1, 1);
 	}
 
-	if (hflip) {
-		a.x = s.width - a.x;
-	}
-	if (vflip) {
-		a.y = s.height - a.y;
+	if (!texture_anchor_ignored && !centered && !region_enabled) {
+		Point2 a = texture->get_anchor();
+
+		if (hflip) {
+			a.x = s.width - a.x;
+		}
+		if (vflip) {
+			a.y = s.height - a.y;
+		}
+
+		ofs -= a;
 	}
 
-	return Rect2(ofs - a, s);
+	return Rect2(ofs, s);
 }
 
 void Sprite2D::_validate_property(PropertyInfo &p_property) const {
@@ -472,6 +500,9 @@ void Sprite2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_region_filter_clip_enabled", "enabled"), &Sprite2D::set_region_filter_clip_enabled);
 	ClassDB::bind_method(D_METHOD("is_region_filter_clip_enabled"), &Sprite2D::is_region_filter_clip_enabled);
 
+	ClassDB::bind_method(D_METHOD("set_texture_anchor_ignored", "ignore"), &Sprite2D::set_texture_anchor_ignored);
+	ClassDB::bind_method(D_METHOD("is_texture_anchor_ignored"), &Sprite2D::is_texture_anchor_ignored);
+
 	ClassDB::bind_method(D_METHOD("set_frame", "frame"), &Sprite2D::set_frame);
 	ClassDB::bind_method(D_METHOD("get_frame"), &Sprite2D::get_frame);
 
@@ -492,6 +523,7 @@ void Sprite2D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "set_texture", "get_texture");
 	ADD_GROUP("Offset", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "centered"), "set_centered", "is_centered");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "texture_anchor_ignored"), "set_texture_anchor_ignored", "is_texture_anchor_ignored");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "offset", PROPERTY_HINT_NONE, "suffix:px"), "set_offset", "get_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_h"), "set_flip_h", "is_flipped_h");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_v"), "set_flip_v", "is_flipped_v");

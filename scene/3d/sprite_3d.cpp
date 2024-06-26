@@ -336,6 +336,19 @@ bool SpriteBase3D::is_flipped_v() const {
 	return vflip;
 }
 
+void SpriteBase3D::set_texture_anchor_ignored(bool p_ignore) {
+	if (texture_anchor_ignored == p_ignore) {
+		return;
+	}
+
+	texture_anchor_ignored = p_ignore;
+	_queue_redraw();
+}
+
+bool SpriteBase3D::is_texture_anchor_ignored() const {
+	return texture_anchor_ignored;
+}
+
 void SpriteBase3D::set_modulate(const Color &p_color) {
 	if (modulate == p_color) {
 		return;
@@ -600,6 +613,9 @@ void SpriteBase3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_flip_v", "flip_v"), &SpriteBase3D::set_flip_v);
 	ClassDB::bind_method(D_METHOD("is_flipped_v"), &SpriteBase3D::is_flipped_v);
 
+	ClassDB::bind_method(D_METHOD("set_texture_anchor_ignored", "ignore"), &SpriteBase3D::set_texture_anchor_ignored);
+	ClassDB::bind_method(D_METHOD("is_texture_anchor_ignored"), &SpriteBase3D::is_texture_anchor_ignored);
+
 	ClassDB::bind_method(D_METHOD("set_modulate", "modulate"), &SpriteBase3D::set_modulate);
 	ClassDB::bind_method(D_METHOD("get_modulate"), &SpriteBase3D::get_modulate);
 
@@ -640,6 +656,7 @@ void SpriteBase3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("generate_triangle_mesh"), &SpriteBase3D::generate_triangle_mesh);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "centered"), "set_centered", "is_centered");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "texture_anchor_ignored"), "set_texture_anchor_ignored", "is_texture_anchor_ignored");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "offset", PROPERTY_HINT_NONE, "suffix:px"), "set_offset", "get_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_h"), "set_flip_h", "is_flipped_h");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_v"), "set_flip_v", "is_flipped_v");
@@ -784,19 +801,24 @@ void Sprite3D::_draw() {
 		dst_offset -= frame_size / 2.0f;
 	}
 
-	Point2 anchor = texture->get_anchor();
-	if (is_flipped_h()) {
-		anchor.x = frame_size.width - anchor.x;
-	}
-	// Given that the Y axis is inverted in 3D, the anchor's "y" must be inverted
-	// as well, relatively to the texture's height, but only when the sprite
-	// is not flipped vertically.
-	if (!is_flipped_v()) {
-		anchor.y = frame_size.height - anchor.y;
+	if (!is_texture_anchor_ignored() && !is_centered() && !is_region_enabled()) {
+		Point2 anchor = texture->get_anchor();
+
+		if (is_flipped_h()) {
+			anchor.x = frame_size.width - anchor.x;
+		}
+		// Given that the Y axis is inverted in 3D, the anchor's "y" must be inverted
+		// as well, relatively to the texture's height, but only when the sprite
+		// is not flipped vertically.
+		if (!is_flipped_v()) {
+			anchor.y = frame_size.height - anchor.y;
+		}
+
+		dst_offset -= anchor;
 	}
 
 	Rect2 src_rect(base_rect.position + frame_offset, frame_size);
-	Rect2 dst_rect(dst_offset - anchor, frame_size);
+	Rect2 dst_rect(dst_offset, frame_size);
 
 	draw_texture_rect(texture, dst_rect, src_rect);
 }
@@ -1036,18 +1058,23 @@ void AnimatedSprite3D::_draw() {
 		ofs -= tsize / 2;
 	}
 
-	Point2 anchor = texture->get_anchor();
-	if (is_flipped_h()) {
-		anchor.x = tsize.width - anchor.x;
-	}
-	// Given that the Y axis is inverted in 3D, the anchor's "y" must be inverted
-	// as well, relatively to the texture's height, but only when the sprite
-	// is not flipped vertically.
-	if (!is_flipped_v()) {
-		anchor.y = tsize.height - anchor.y;
+	if (!is_texture_anchor_ignored() && !is_centered()) {
+		Point2 anchor = texture->get_anchor();
+
+		if (is_flipped_h()) {
+			anchor.x = tsize.width - anchor.x;
+		}
+		// Given that the Y axis is inverted in 3D, the anchor's "y" must be inverted
+		// as well, relatively to the texture's height, but only when the sprite
+		// is not flipped vertically.
+		if (!is_flipped_v()) {
+			anchor.y = tsize.height - anchor.y;
+		}
+
+		ofs -= anchor;
 	}
 
-	Rect2 dst_rect(ofs - anchor, tsize);
+	Rect2 dst_rect(ofs, tsize);
 
 	draw_texture_rect(texture, dst_rect, src_rect);
 }
